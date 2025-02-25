@@ -66,7 +66,7 @@ sudo netplan
   ![4 pinging google](https://github.com/user-attachments/assets/7a68e1b7-ca43-42e7-9ae3-bd54249cb69e)
   - Connectivity is working
 
-#### Install Splunk
+### Install Splunk
 
 1. On the <b>Host machine</b> go to the Splunk website and download the Splunk Enterprise _.deb_ file
    ![5 splunk deb file](https://github.com/user-attachments/assets/a7f6dc88-1d4b-4ec1-addc-3ca7a9cbb0f6)
