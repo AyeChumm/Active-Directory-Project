@@ -66,7 +66,7 @@ sudo netplan
   ![4 pinging google](https://github.com/user-attachments/assets/7a68e1b7-ca43-42e7-9ae3-bd54249cb69e)
   - Connectivity is working
 
-### Install Splunk
+#### Install Splunk
 
 1. On the <b>Host machine</b> go to the Splunk website and download the Splunk Enterprise _.deb_ file
    ![5 splunk deb file](https://github.com/user-attachments/assets/a7f6dc88-1d4b-4ec1-addc-3ca7a9cbb0f6)
@@ -79,7 +79,7 @@ sudo netplan
    ![6 Shared Folder](https://github.com/user-attachments/assets/81de9a8d-38fe-4f17-948e-320a47a73bc3)
 
    - Make a new folder
-   ![7 add new folder](https://github.com/user-attachments/assets/3172be75-e513-4c60-868e-b2b1a00ff678)
+   <br clear="left"/> ![7 add new folder](https://github.com/user-attachments/assets/3172be75-e513-4c60-868e-b2b1a00ff678)
 
    - Find the file path of the _.deb_ file and select "Read-only, auto-mount, Make Permanent". Click ok.
    ![8 shared folder settings](https://github.com/user-attachments/assets/ab0a10cc-327e-4afe-af22-dc69231f3dba)
@@ -131,17 +131,18 @@ sudo netplan
 
 10. Set up Splunk to start up every time the Ubuntu VM starts up
     ![10 Splunk is on when reboot](https://github.com/user-attachments/assets/be3278c1-68a3-4bfd-987c-88ec2b345707)
-    - ```bash
+    - Gets out of splunk@splunk and back to user@splunk
+    ```bash
       exit
       ```
-      Gets out of splunk@splunk and back to user@splunk
+      
     - Go to bin directory
-    - ```bash
+      ```bash
       sudo ./splunk enable boot-start -user splunk
       ```
       Splunk will start up as user@splunk every time VM is turned on
 
-### Install Splunk Universal Forwarder
+#### Install Splunk Universal Forwarder For Both Target Machine and Windows 2022 Server VM
 
 1. Change Windows 10's PC name to Target-PC
    ![1 change pc name to target](https://github.com/user-attachments/assets/e1555e9d-8968-4605-aaa7-100fc80fc45d)
@@ -167,7 +168,7 @@ Check the IP again in the terminal
    <br clear="left"/>![5 splunk forwarder](https://github.com/user-attachments/assets/abf1a91b-abe7-4b91-9061-cb61b3204974)
    - Make sure the Receiving Index is 192.168.10.10 the Splunk Server using port 9997
   
-### Install Sysmon
+#### Install Sysmon For Both Target Machine and Windows Server 2022 VM
 
 1. In the browser, search up Sysmon and download it. After downloading, extract the files.
    <br clear="left"/>![6 download sysmon](https://github.com/user-attachments/assets/cc52f9be-db5c-4263-81a1-6044a91f0f3d)
@@ -213,6 +214,117 @@ Check the IP again in the terminal
       renderXml = true
       source = XmlWinEventLog:Microsoft-Windows-Sysmon/Operational
      ```
+   - Save the file as "inputs.conf" and for all file types
+     <br clear="left"/>![10 notepad filepath](https://github.com/user-attachments/assets/f0980cc0-9801-4d8d-a220-621359d2b811)
+
+   - Open Services as admin from the Windows search bar and find SplunkForwarder service
+     ![11 Splunk services restart](https://github.com/user-attachments/assets/243d2522-1cea-4e02-89ae-618bb35f37f1)
+     - Check that the "Log on as" tab is set to "Local System Account" (The default NT Service setting may disrupt Splunk from collecting logs due to permissions)
+     - Right-click SplunkForwarder and restart the service to apply changes
+    
+ #### Check Splunk Ingestion
+
+1. Log into Splunk using a web browser
+   ```bash
+   192.168.10.10:8000
+   ```
+   
+2. Create an index named "endpoint"
+   <br clear="left"/>![12 endpoint index ](https://github.com/user-attachments/assets/b580f375-e21a-47ec-8a67-4db150ef62dd)
+   - In the inputs.conf File for Sysmon, it tells SplunkForwarder to send data to index=endpoint
+   - Go to Settings and select "Index"
+   - Select "New Index" and add endpoint
+  
+3. Enable Splunk Server to receive data
+   - Go to Settings and select "Forwarding and Receiving" then "Configure Receiving"
+     ![13 Splunk receiving data](https://github.com/user-attachments/assets/bc59fa5f-ce39-4c23-80a5-f68836ff61cf)
+
+   - Use Port 9997 (same port when installing the forwarder)
+     ![14 port 9997](https://github.com/user-attachments/assets/7bdff5d2-fe1b-4bd7-8ed6-69a8a4261d35)
+
+4. Confirm both target machine and server are forwarding data into Splunk querying:
+   ```bash
+   index=endpoint
+   ```
+   ![15 splunk forwarder and sysmon on server and target](https://github.com/user-attachments/assets/6bdf83f4-aa76-482d-9d0e-ac6db3269cfe)
+
+### Install and Configure Active Directory Onto Windows Server 2022
+
+1. Open Server Manager
+   ![1 server Manager settings 1](https://github.com/user-attachments/assets/5a38b99d-ca5f-44e9-8f6d-d87c67f020c7)
+   - Select "Manage" and "Add Role and DF
+   - For Installation Type select "Role-based or feature-based installation"
+
+  ![2 server manager server roles](https://github.com/user-attachments/assets/a8892c1f-f065-43ac-8b82-da34af73b029)
+  - For Server Roles select "Active Directory Domain Service" (AD DS) and "Add Feature"
+  - Leave everything else as is and install
+
+2. Promote to a Domain Controller
+   <br clear="left"/>![3 promoting to domain controller](https://github.com/user-attachments/assets/3dd7be95-77f7-4ab5-9a14-63727823b829)
+   - In Server Manager select the flag icon on top
+   - Select "Promote this server to a domain controller
+
+3. Deployment Configuration
+   <br clear="left"/>![4 add a new forest](https://github.com/user-attachments/assets/46a11fdf-511f-4001-b5dd-4eedfa10170f)
+   - Select "Add a new forest"
+   - This adds a new domain. There are currently no domains
+  
+   ![5 attackers target these for active directory](https://github.com/user-attachments/assets/a7065bb3-011c-49a4-b81a-ab5b32028f1c)
+   - These files contain everything related to Active Directory making them a frequent target for attackers
+  
+   - Leave everything else as default and install
+   - Log back in
+     <br clear="left"/>![6 ADDS installed](https://github.com/user-attachments/assets/8e464df5-b8c9-4ae8-aec1-9d3c3e785ed5)
+     - The "\" indicates AD-DS has successfully been installed and the server has been promoted to a domain controller
+
+#### Create a User for Active Directory
+
+1. Go to "Tools" and select "Active Directory Users and Computers"
+   <br clear="left"/>![7 create obj,user, groups etc](https://github.com/user-attachments/assets/bde73f0b-d6be-4c04-a124-2d808a834bae)
+
+2. Select "admin local", "New", then "Organizational Unit" for the IT department
+   <br clear="left"/>![8 organizational unit](https://github.com/user-attachments/assets/3d555751-eac3-42c3-bbfe-346340578fa7)
+   - In the real world, best practice is to create an organizational unit for different departments
+  
+3. In IT, right-click, select "New" then "User"
+   ![9 creating new user](https://github.com/user-attachments/assets/1398b969-f6bd-4699-852d-864c860e0978)
+
+4. This new user will be named John Doe
+   <br clear="left"/>![10 user is created](https://github.com/user-attachments/assets/95e973fb-120c-425c-a96b-612f98294107)
+   - User has successfully been made. John Doe of the IT department
+
+#### Join Target Machine With Domain
+
+1. In the target machine, type in PC in search bar and select "Properties"
+   ![1  adding target to domain](https://github.com/user-attachments/assets/e4d6d46a-5bb2-4aa6-b1de-89690ed858cf)
+   - Go to "Advance system settings", "Computer Name", "Change", and under "Member of" select "Domain" with the name of your ADDS
+   - Click Ok
+  
+2. An error will occur
+   <br clear="left"/>![2  error](https://github.com/user-attachments/assets/01cbb146-98f3-498a-8e90-39fb2828eb9e)
+   - Must change DNS in Network Settings from 8.8.8.8 to the ADDC's IP 192.168.10.11
+
+3. After changing DNS, try again and log in using the Domain Controller's account
+
+4. To apply changes, you will be prompted to restart the machine
+
+5. ![3  logging in as john doe](https://github.com/user-attachments/assets/e29cc0e4-e02a-4b88-b2c1-76b9711915e1)
+   - Select "Other User"
+   - Login as John Doe from the IT department when creating a Domain User
+
+### Use Kali Linux to Perform a Brute Force Attack
+
+
+
+
+
+
+
+
+
+
+
+
    
    
 
