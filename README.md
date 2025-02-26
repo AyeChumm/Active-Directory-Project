@@ -1,7 +1,7 @@
 # Active-Directory-Project
 
 ## Objective
-This project aims to set up and configure a lab environment to simulate real-world attack and defense scenarios. The environment will include installing and configuring Windows Server 2022, Splunk Server (Ubuntu), Windows 10, and Kali Linux VM. Key tasks will involve configuring Splunk and Sysmon for logging, setting up Active Directory, and promoting the Windows Server to a domain controller. Additionally, a brute force attack will be executed using Kali Linux on a domain user account as well as Atomic Red Team to generate telemetry with analysis conducted through Splunk.
+This project aims to set up and configure a lab environment to simulate real-world attack and defense scenarios. The environment will include installing and configuring Windows Server 2022, Splunk Server (Ubuntu), Windows 10, and Kali Linux VM. Key tasks will involve configuring Splunk and Sysmon for logging, setting up Active Directory, and promoting the Windows Server to a domain controller. Additionally, a brute force attack will be executed using Kali Linux on a domain user account as well as using Atomic Red Team to generate telemetry with analysis conducted through Splunk.
 
 ## Tools
 - VirtualBox as the hypervisor
