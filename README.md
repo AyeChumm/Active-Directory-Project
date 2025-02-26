@@ -147,6 +147,77 @@ sudo netplan
    ![1 change pc name to target](https://github.com/user-attachments/assets/e1555e9d-8968-4605-aaa7-100fc80fc45d)
 
 2. Manually configure Windows 10's IP
+  ![2 Target-PC IP has changed png](https://github.com/user-attachments/assets/dc6673f8-6a23-4109-ac33-f23cfb265478)
+- Open network and internet settings and configure the following:
+- IP to 192.168.10.100 (any ip in the network will do)
+- Subnet mask 255.255.255.0 (/24)
+- Default gateway: 192.168.10.1
+- Preferred DNS server: 8.8.8.8 (google.com)
+
+Check the IP again in the terminal
+   ```bash
+   ip a
+   ```
+  ![3 target-pc IP has changed](https://github.com/user-attachments/assets/516ee556-1dab-483a-9128-2b7e8988b9ac)
+
+3. Head over to Splunk's website and in products, download the Universal Forwarder for windows
+   ![4 download universal forwarder](https://github.com/user-attachments/assets/a3e3bdbe-a1de-43a3-9df6-0794c2123602)
+
+4. After downloading, find the file and install
+   <br clear="left"/>![5 splunk forwarder](https://github.com/user-attachments/assets/abf1a91b-abe7-4b91-9061-cb61b3204974)
+   - Make sure the Receiving Index is 192.168.10.10 the Splunk Server using port 9997
+  
+### Install Sysmon
+
+1. In the browser, search up Sysmon and download it. After downloading, extract the files.
+   <br clear="left"/>![6 download sysmon](https://github.com/user-attachments/assets/cc52f9be-db5c-4263-81a1-6044a91f0f3d)
+
+2. Search up and download the configuration files for Sysmon (I will be using Olafhartong's configuration files on github)
+   ![7 sysmon raw](https://github.com/user-attachments/assets/2b0ec7ad-f4b3-44ff-8de3-a2a393d27dd4)
+   - Scroll down to sysmonconfig.xml
+   - Click raw and save as a download
+
+3. Open PowerShell as administrator
+   
+4. Install Sysmon with the configurations:
+   - Go into the location of the Sysmon file
+   ```bash
+   cd (filepath to sysmon files)
+   ```
+   - Install Sysmon with config files
+   ```bash
+   ./Sysmon64.exe -i ..\ sysmonconfig.xml
+   ```
+
+5. Create a new file called input.conf to tell the forwarder what type of data to send to the Splunk server. It will located in C: programfiles/SplunkUniversalForwarder/etc/system/local
+   ![8 only create folder with admin](https://github.com/user-attachments/assets/6487f7d4-8d78-4084-8c30-9e4453f348f3)
+   - Only allows the creation of a folder and not file
+  
+   - Open Notepad as admin and use the following configuration:
+     ```bash
+     [WinEventLog://Application]
+      index = endpoint
+      disabled = false
+
+      [WinEventLog://Security]
+      index = endpoint
+      disabled = false
+
+      [WinEventLog://System]
+      index = endpoint
+      disabled = false
+
+      [WinEventLog://Microsoft-Windows-Sysmon/Operational]
+      index = endpoint
+      disabled = false
+      renderXml = true
+      source = XmlWinEventLog:Microsoft-Windows-Sysmon/Operational
+     ```
+   
+   
+
+
+
 
 
 
