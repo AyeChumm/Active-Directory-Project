@@ -314,6 +314,87 @@ Check the IP again in the terminal
 
 ### Use Kali Linux to Perform a Brute Force Attack
 
+#### Check Initial Kali Configurations
+
+1. Manually configure a static IP as per the diagram
+   ![1  kali changed IP](https://github.com/user-attachments/assets/679dc705-1622-4586-af63-1a56a47850f2)
+   - IP: 192.168.10.250/24 | Default Gateway: 192.168.10.1 | DNS: 8.8.8.8
+  
+2. Disconnect from ethernet
+   <br clear="left"/>![2  disconnect](https://github.com/user-attachments/assets/2010aa3d-fd1e-4741-9c2b-65fdcc530d69)
+   - Reconnect to apply changes
+  
+3. Check new IP and connectivity
+   - ```bash
+     ip a
+     ```
+     ![3  IP has changed](https://github.com/user-attachments/assets/de636acb-4e1a-4c4a-b665-84e7d31111a3)
+   - ```bash
+     ping google.com
+     ```
+     ![4  ping google](https://github.com/user-attachments/assets/704f8f1f-6183-471f-9117-a5dc9bc4ca22)
+
+4. Update and upgrade repository
+   ```bash
+   sudo apt-get update && sudo apt-get upgrade -y
+   ```
+
+#### Prepare Attack
+
+1. Make a new directory ad-project
+   ```bash
+   mkdir ad-project
+   ```
+   - All files made for the attack will be placed here
+
+2. Install Crowbar to perform the brute force attack
+   ```bash
+   sudo apt-get install crowbar -y
+   ```
+
+3. Find a file called rockyou.txt.gz
+   ```bash
+   cd /usr/share/wordlist
+   ```
+   - Rockyou.txt is a list of passwords commonly used in security testing that is built-in with Kali Linux
+
+   - Unzip file
+     ```bash
+     Sudo gunzip rockyou.txt.gz
+     ```
+
+   - Copy file into the ad-project directory
+     ```bash
+     cp rockyou.txt ~/desktop/ad-project
+     ```
+
+4. Go to the ad-project directory
+   ```bash
+   cd ~/Desktop/ad-project/
+   ```
+
+5. Take the first 20 passwords from rockyou.txt and input them into a new file called passwords.txt
+   ```bash
+   head -n 20 rockyou.txt > passwords.txt
+   ```
+
+6. Open passwords.txt
+   ```bash
+   cat passwords.txt
+   ```
+   <br clear="left"/>![5  passwords](https://github.com/user-attachments/assets/fd559760-933b-44ad-9fce-dc9f9c14c740)
+
+
+7. Edit the _.txt_ file and add the password used for the target
+   ```bash
+   nano passwords.txt
+   ```
+   <br clear="left"/>![6  nano password](https://github.com/user-attachments/assets/e9ea7eb5-51df-4ae1-aa3c-5d91db559770)
+
+#### Enable RDP on Target Machine
+
+
+
 
 
 
