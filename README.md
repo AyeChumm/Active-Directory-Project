@@ -391,34 +391,92 @@ Check the IP again in the terminal
    ```
    <br clear="left"/>![6  nano password](https://github.com/user-attachments/assets/e9ea7eb5-51df-4ae1-aa3c-5d91db559770)
 
-#### Enable RDP on Target Machine
+#### Enable Remote Desktop Protocol (RDP) on the Target Machine
 
+1. Type in "PC" in the search bar, select "Properties", then "Advanced system settings"
+   ![7  advanced system settings](https://github.com/user-attachments/assets/8683a51e-a376-4a8d-818f-6a2cb62c8ca9)
 
+2. Configure Settings to enable RDP
+   ![8  enabled rdp ](https://github.com/user-attachments/assets/be61d1af-8360-44a2-b739-e2daf2236bce)
+   - Log in as Administrator
+   - Go to the Remote tab and "Allow remote connections to this computer"
+   - "Select Users", "Add...", then select the desired users
+   - Select "Ok" to apply changes
+  
+#### Perform Brute Force Attack
 
+1. Use Crowbar to perform a brute force attack on target machine
+   ```bash
+   crowbar -b rdp -u jdoe-C password.txt -s 192.168.10.100/32
+   ```
+   ![9  brute force attack](https://github.com/user-attachments/assets/1ba2bde2-26a4-4ba5-a3f7-238f90abc2ca)
+   - b: refers to the delivery of attack
+   - u: specific user
+   - C: specifies the password.txt file
+   - s: the source IP
+   - /32: to target only 1 IP
+  
+#### See Telemetry in Splunk
 
+1. In "Search and Reporting" app query:
+   ```bash
+   index=endpoint jdoe
+   ```
+   ![10  event codes](https://github.com/user-attachments/assets/14a8cd44-5ae4-4d9d-80ff-2a1d5e0b0002)
+   - EventCode 4624:an account was successfully logged on
+   - EventCode 4625: an account failed to log on
+   - There were only 21 passwords in the passwords.txt file including the 1 correct password (20 failed attempts, 1 successful attempt)
+  
+### Atomic Red Team
 
+#### Exclusion for C Drive
+- Microsoft Defender will detect and remove some files from Atomic Red Team if not excluded
 
+1. Open Windows Security and select "Virus and threat protection"
+   ![2  ](https://github.com/user-attachments/assets/8994f118-3b95-4995-a1f9-7df1382556b1)
 
+2. Select "Manage settings"
+   <br clear="left"/>![3](https://github.com/user-attachments/assets/edf54426-dc3e-4da4-b78f-04219be9ccce)
 
+3. Scroll down to "Exclusions" and select "Add or remove exclusions"
+   <br clear="left"/>![4](https://github.com/user-attachments/assets/acf18d50-cecb-4a60-968a-6f546b567c54)
 
+4. Add an exclusion, select "Folder", then select C Drive to exclude it
+   <br clear="left"/>![5](https://github.com/user-attachments/assets/876bb180-c828-4bcd-bf70-cc2d8ef156c3)
 
+#### Install Atomic Red Team (ART)
 
+1. Open Powershell as admin
+   ```bash
+   Set-ExecutionPolicy Bypass CurrentUser
+   ```
+   ![1  set exclusion](https://github.com/user-attachments/assets/c0a5ff2c-d80a-4aa0-93fb-1396c8b650e8)
 
+   ```bash
+   IEX (IWR -UseBasicParsing); Install-AtomicRedTeam -getAtomics
+   ```
+   - installs ART
+  
+2. Go to the C Drive and open atomicredteam/atomics
+   <br clear="left"/>![7](https://github.com/user-attachments/assets/baae5a5b-9f74-4631-9f9c-bc5c385fa802)
+   - I will use T1136.001 = creates a local account
+  
+     - These codes are the tactical codes associated with the MITRE ATT&CK Framework
+       ![8](https://github.com/user-attachments/assets/092f195e-6732-46cf-ad70-204d75661cca)
 
+3. Generate telemetry with ART:
+   ```bash
+   Invoke-AtomicTest T1136.001
+   ```
+   ![9  new localuser](https://github.com/user-attachments/assets/fb9daf2e-1ed1-411b-bb86-0191d6813916)
+   - NewLocalUser has been created
+  
+#### Check In Splunk for NewLocalUser
 
-   
-   
-
-
-
-
-
-
-
-   
-
-
-
-
-
+1. Query
+   ```bash
+   index=endpoint Newlocaluser
+   ```
+   ![10 localuser found](https://github.com/user-attachments/assets/cb46525b-e605-48c1-a543-871859be3cb2)
+   - There is a new local account by the name of NewLocalUser
 
