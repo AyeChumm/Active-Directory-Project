@@ -174,7 +174,7 @@ Check the IP again in the terminal
    <br clear="left"/>![6 download sysmon](https://github.com/user-attachments/assets/cc52f9be-db5c-4263-81a1-6044a91f0f3d)
 
 2. Search up and download the configuration files for Sysmon (I will be using Olafhartong's configuration files on github)
-   ![7 sysmon raw](https://github.com/user-attachments/assets/2b0ec7ad-f4b3-44ff-8de3-a2a393d27dd4)
+   <br clear="left"/>![7 sysmon raw](https://github.com/user-attachments/assets/2b0ec7ad-f4b3-44ff-8de3-a2a393d27dd4)
    - Scroll down to sysmonconfig.xml
    - Click raw and save as a download
 
